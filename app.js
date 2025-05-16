@@ -4,6 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var authRouter = require('./routes/auth'); // <- tutaj jest OK
+var apiRouter = require('./routes/api'); // <- tutaj jest OK
 const cors = require('cors');
 
 
@@ -26,7 +27,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // ✅ Routing po middleware
 app.use('/auth', authRouter);
-
+app.use('/api', apiRouter);
 // 404 handler
 app.use(function(req, res, next) {
   next(createError(404));

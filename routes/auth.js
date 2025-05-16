@@ -5,7 +5,7 @@ const cookieParser = require('cookie-parser');
 const router = express.Router();
 const pool = require('../db');
 const SECRET_KEY = 'e91f696e93ce5cb5a43208aa0368aae3f711f1a03a66bb052290a22df6fd266fz';
-// const users = [];
+
 
 // użycie cookie parsera
 router.use(cookieParser());
@@ -14,8 +14,6 @@ router.use(cookieParser());
 router.post('/register', async (req, res) => {
     const { username, password } = req.body;
     const hashed = await bcrypt.hash(password, 10);
-    // users.push({ username, password: hashed });
-    // res.json({ message: 'Zarejestrowano pomyślnie' });
     try{
         const result = await pool.query(
             'INSERT INTO users (username,password) VALUES ($1, $2) RETURNING *',[username,hashed]
@@ -35,10 +33,6 @@ router.post('/register', async (req, res) => {
 // Logowanie
 router.post('/login', async (req, res) => {
     const { username, password } = req.body;
-    // const user = users.find(u => u.username === username);
-    // if (!user || !(await bcrypt.compare(password, user.password))) {
-    //     return res.status(401).json({ message: 'Błędne dane logowania' });
-    // }
     const result = await pool.query('SELECT * FROM users WHERE username = $1',[username]);
     const user = result.rows[0];
     if (!user || !(await bcrypt.compare(password, user.password))) {
@@ -49,8 +43,7 @@ router.post('/login', async (req, res) => {
     // Ustawienie ciasteczka httpOnly
     res.cookie('token', token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production', // HTTPS tylko w produkcji
-        sameSite: 'lax', // ogranicza CSRF
+        sameSite: 'lax',
         maxAge: 3600000 // 1 godzina
     });
 
@@ -60,7 +53,6 @@ router.post('/login', async (req, res) => {
 router.post("/logout",(req,res)=>{
     res.clearCookie('token', {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
     });
     res.json({ message: 'Wylogowano pomyślnie' });
