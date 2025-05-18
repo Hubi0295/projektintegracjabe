@@ -3,10 +3,10 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const cookieParser = require('cookie-parser');
 const router = express.Router();
-const pool = require('../db');
+const { sequelize, QueryResult, Users, pool} = require('../db');
 const SECRET_KEY = 'e91f696e93ce5cb5a43208aa0368aae3f711f1a03a66bb052290a22df6fd266fz';
 
-
+const { Sequelize } = require('sequelize');
 // użycie cookie parsera
 router.use(cookieParser());
 
@@ -15,9 +15,10 @@ router.post('/register', async (req, res) => {
     const { username, password } = req.body;
     const hashed = await bcrypt.hash(password, 10);
     try{
-        const result = await pool.query(
-            'INSERT INTO users (username,password) VALUES ($1, $2) RETURNING *',[username,hashed]
-        );
+        await Users.create({
+            username: username,
+            password: hashed
+        });
         res.json({message:'Zarejestrowano pomyslnie'});
     }
     catch(err){
@@ -33,8 +34,13 @@ router.post('/register', async (req, res) => {
 // Logowanie
 router.post('/login', async (req, res) => {
     const { username, password } = req.body;
-    const result = await pool.query('SELECT * FROM users WHERE username = $1',[username]);
-    const user = result.rows[0];
+    // const result = await pool.query('SELECT * FROM Users WHERE username = $1',[username]);
+    const result = await Users.findAll({
+        where: { username: username }
+    });
+
+    const user = result[0];
+
     if (!user || !(await bcrypt.compare(password, user.password))) {
         return res.status(401).json({ message: 'Błędne dane logowania' });
     }
