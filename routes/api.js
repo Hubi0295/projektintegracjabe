@@ -511,6 +511,7 @@ router.get('/test', async (req, res) => {
                     years.push(y);
                 }
             }
+
             const articles = [];
             for (const year of years) {
                 const from = `${year}-01-01T00:00:00Z`;
