@@ -470,10 +470,11 @@ router.get('/test', async (req, res) => {
             for (const year of years) {
                 const from = `${year}-01-01T00:00:00Z`;
                 const to = `${year}-12-31T23:59:59Z`;
-                const url = `https://gnews.io/api/v4/search?q=global&lang=en&from=${from}&to=${to}&max=1&apikey=080e3de2b00eddd09a9ff97335c13b4f`;
+                const url = `https://gnews.io/api/v4/search?q=global&category=business&lang=en&from=${from}&to=${to}&max=1&apikey=70dbd09cd5b78d9ff8af22c38a3b2f4f`;
                 try {
                     const response = await axios.get(url);
                     const news = response.data.articles?.[0];
+                    console.log(news);
                     if (news) {
                         articles.push({
                             title: news.title,
@@ -514,7 +515,7 @@ router.get('/test', async (req, res) => {
             for (const year of years) {
                 const from = `${year}-01-01T00:00:00Z`;
                 const to = `${year}-12-31T23:59:59Z`;
-                const url = `https://gnews.io/api/v4/search?q=Poland&lang=en&from=${from}&to=${to}&max=1&apikey=080e3de2b00eddd09a9ff97335c13b4f`;
+                const url = `https://gnews.io/api/v4/search?q=Poland&lang=en&category=business&from=${from}&to=${to}&max=1&apikey=080e3de2b00eddd09a9ff97335c13b4f`;
                 try {
                     const response = await axios.get(url);
                     const news = response.data.articles?.[0];
